@@ -1,6 +1,6 @@
 import scala.swing._
 import javax.swing.border.EmptyBorder
-import sys.process._
+import scala.sys.process._
 import scala.swing.event.MouseClicked
 import javax.swing.table.DefaultTableModel
 import javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS
@@ -16,7 +16,8 @@ object main extends SimpleSwingApplication {
 	val resultsTable = new Table
 
 	// some defaults for easier testings
-	val defaultSearchDir = "C:/Users/simon/Documents/git/scala-grep/src/"
+//	val defaultSearchDir = "C:/Users/simon/Documents/git/scala-grep/src"
+	val defaultSearchDir = "/Users/simonced/Documents/git/scala-grep/src"
 	val defaultSearchTerm = "def .*"
 
 
@@ -59,19 +60,18 @@ object main extends SimpleSwingApplication {
 		val searchButton = new Button("Search") {
 			listenTo(mouse.clicks)
 			reactions += {
-				case MouseClicked(_, _, _, _, _) => {
-					// idea for launching an external app:
-					// http://alvinalexander.com/scala/how-to-execute-external-system-commands-in-scala
-
-					val grepcommand = "grep -nHr \"" + searchWhatInput.text + "\" " + searchWhereInput.text
+				case MouseClicked(_, _, _, _, _) => { 
+					// TODO make the grep flags as parameters?
+					val args = Seq("-nHr", searchWhatInput.text, searchWhereInput.text)
+					println( args )
 					try {
-						// TODO make the grep flags as parameters?
-						val results = Process(grepcommand).lines
-						updateResults(searchWhatInput.text, searchWhereInput.text, results)
+						val results = Process("grep", args).!!
+						println(results)
+						updateResults(searchWhatInput.text, searchWhereInput.text, results.split("\n") )
 					}
 					catch {
 						case e: Exception => {
-							println("error with the grep command: " + grepcommand)
+							println("error with the grep command")
 							println("error: " + e)
 						}
 					}
@@ -93,7 +93,7 @@ object main extends SimpleSwingApplication {
 	 * update table listing
 	 * TODO I am not sure that recreating a new model everytime is the best solution
 	 */
-	def updateResults(what: String, where:String, lines: Stream[String]) {
+	def updateResults(what: String, where:String, lines: Array[String]) {
 		val tableModel = new DefaultTableModel
 
 		for(col <- headers) {
