@@ -13,13 +13,27 @@ object main extends SimpleSwingApplication {
 
 	// sample: https://gist.github.com/pawelprazak/1348118
 	val headers = Seq("file", "line", "sample")
-	val resultsTable = new Table
+	val resultsTable = new Table {
+		peer.setShowGrid(false)
+		// custom cell color for each line
+		peer.setDefaultRenderer(classOf[String], new grepTableCellRenderer)
+	}
 
 	// some defaults for easier testings
-//	val defaultSearchDir = "C:/Users/simon/Documents/git/scala-grep/src"
-	val defaultSearchDir = "/Users/simonced/Documents/git/scala-grep/src"
+	//val defaultSearchDir = "C:/Users/simon/Documents/git/scala-grep/src"
+	val defaultSearchDir = "C:/Users/simon/git/scala-grep/src"
+	//val defaultSearchDir = "/Users/simonced/Documents/git/scala-grep/src"
 	val defaultSearchTerm = "def .*"
 
+	// search fields
+	val searchWhereInput = new TextField(defaultSearchDir)
+	val searchWhatInput = new TextField(defaultSearchTerm)
+//		searchInput.columns = 15
+
+	// =====================================================================
+
+	// for the tests, launch the search right away
+	doSearch
 
 	// main frame constructor
 	def top = new MainFrame {
@@ -49,34 +63,15 @@ object main extends SimpleSwingApplication {
 	def makeSearchArea: BoxPanel = {
 		// search text input (regex)
 		val searchWhatLabel = new Label(" What? ")
-		val searchWhatInput = new TextField(defaultSearchTerm)
-//		searchInput.columns = 15
 
 		// search folder
 		val searchWhereLabel = new Label(" Where? ")
-		val searchWhereInput = new TextField(defaultSearchDir)
 
 		// button
 		val searchButton = new Button("Search") {
 			listenTo(mouse.clicks)
 			reactions += {
-				case MouseClicked(_, _, _, _, _) => { 
-					// TODO make the grep flags as parameters?
-					val args = Seq("-nHr", searchWhatInput.text, searchWhereInput.text)
-					println( args )
-					try {
-						val results = Process("grep", args).!!
-						println(results)
-						updateResults(searchWhatInput.text, searchWhereInput.text, results.split("\n") )
-					}
-					catch {
-						case e: Exception => {
-							println("error with the grep command")
-							println("error: " + e)
-						}
-					}
-
-				}
+				case MouseClicked(_, _, _, _, _) => doSearch
 			}
 		}
 
@@ -88,6 +83,23 @@ object main extends SimpleSwingApplication {
 		}
 	}
 
+
+	def doSearch {
+		// TODO make the grep flags as parameters?
+		val args = Seq("-nHr", searchWhatInput.text, searchWhereInput.text)
+//			println( args )
+		try {
+			val results = Process("grep", args).!!
+//			println(results)
+			updateResults(searchWhatInput.text, searchWhereInput.text, results.split("\n") )
+		}
+		catch {
+			case e: Exception => {
+				println("error with the grep command")
+				println("error: " + e)
+			}
+		}
+	}
 
 	/**
 	 * update table listing
