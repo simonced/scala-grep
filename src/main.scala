@@ -4,12 +4,21 @@ import scala.sys.process._
 import scala.swing.event.MouseClicked
 import javax.swing.table.DefaultTableModel
 import javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS
+import javax.swing.JTable.AUTO_RESIZE_LAST_COLUMN
+import javax.swing.JTable.AUTO_RESIZE_OFF
+import java.awt.Dimension
+import java.awt.FontMetrics
+import scala.swing.event.TableResized
+
 
 object main extends SimpleSwingApplication {
-	val version = "0.1"
+	val version = "0.2"
 
 	// empty border to space out elements a little
 	val padding = new EmptyBorder(5, 5, 5, 5)
+
+	// width padding for results columns
+	val textColPadding = 10
 
 	// sample: https://gist.github.com/pawelprazak/1348118
 	val headers = Seq("file", "line", "sample")
@@ -20,9 +29,9 @@ object main extends SimpleSwingApplication {
 	}
 
 	// some defaults for easier testings
-	//val defaultSearchDir = "C:/Users/simon/Documents/git/scala-grep/src"
-	val defaultSearchDir = "C:/Users/simon/git/scala-grep/src"
-	//val defaultSearchDir = "/Users/simonced/Documents/git/scala-grep/src"
+	val defaultSearchDir = "C:/Users/simon/Documents/git/scala-grep/src" // at work
+	//val defaultSearchDir = "C:/Users/simon/git/scala-grep/src" // at home
+	//val defaultSearchDir = "/Users/simonced/Documents/git/scala-grep/src" // on my Macbook
 	val defaultSearchTerm = "def .*"
 
 	// search fields
@@ -38,10 +47,11 @@ object main extends SimpleSwingApplication {
 	// main frame constructor
 	def top = new MainFrame {
 		title = "scala-grep v." + version
+		// TODO change for a BorderPanel
 		contents = new BoxPanel(Orientation.Vertical) {
 			contents ++= List(makeSearchArea, makeExplanationArea, makeMainTable)
 		}
-		size = new Dimension(800, 400)
+		size = new Dimension(800, 600)
 		centerOnScreen()
 	}
 
@@ -101,6 +111,7 @@ object main extends SimpleSwingApplication {
 		}
 	}
 
+
 	/**
 	 * update table listing
 	 * TODO I am not sure that recreating a new model everytime is the best solution
@@ -112,8 +123,13 @@ object main extends SimpleSwingApplication {
 			tableModel.addColumn(col)
 		}
 
+		val jtable = resultsTable.peer
+		val fm = jtable.getFontMetrics(jtable.getFont)
+
 		// data to adjust column width automatically
 		var maxFileNameSize = 0 // count of characters
+		var maxLineNumSize = 0 // count of characters
+		var maxSampleSize = 0 // count of characters
 		// loop on data lines
 		for(l <- lines) {
 			// clear out the search path that is included in the results, that gives shorter file names
@@ -121,7 +137,9 @@ object main extends SimpleSwingApplication {
 			val parts = strippedLine.split(":")
 			val line:Array[Object] = Array(parts(0), parts(1), parts(2))
 			// data size logic
-			maxFileNameSize = maxFileNameSize.max(parts(0).length)
+			maxFileNameSize = maxFileNameSize.max( fm.stringWidth(parts(0)) )
+			maxLineNumSize = maxLineNumSize.max( fm.stringWidth(parts(1)) )
+			maxSampleSize = maxSampleSize.max( fm.stringWidth(parts(2)) )
 			// add line to model
 			tableModel.addRow(line)
 		}
@@ -129,14 +147,19 @@ object main extends SimpleSwingApplication {
 		// set new model
 		resultsTable.model = tableModel
 
-		/* sample below not working...
+		/* sample below not working... */
 		// adapt column size to number of characters max
-		val fileColumn = resultsTable.peer.getColumnModel().getColumn(0)
-		// TODO set a dynamic value for characters count?
-		println(maxFileNameSize)
-		fileColumn.setPreferredWidth( maxFileNameSize * 5 )
-		*/
 
+		val fileColumn = jtable.getColumnModel().getColumn(0)
+		val lineColumn = jtable.getColumnModel().getColumn(1)
+		val sampleColumn = jtable.getColumnModel().getColumn(1)
+
+		// TODO use real font calculations
+		fileColumn.setMaxWidth( maxFileNameSize + textColPadding )
+		fileColumn.setMinWidth( maxFileNameSize + textColPadding )
+
+		lineColumn.setMaxWidth( maxLineNumSize + textColPadding )
+//		sampleColumn.setMinWidth( maxSampleSize * 10 )
 	}
 
 
@@ -144,7 +167,6 @@ object main extends SimpleSwingApplication {
 	 * results table element
 	 */
 	def makeMainTable:ScrollPane = {
-
 		new ScrollPane() {
 			contents = resultsTable
 		}

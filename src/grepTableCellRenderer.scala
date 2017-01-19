@@ -17,7 +17,7 @@ class grepTableCellRenderer extends DefaultTableCellRenderer {
         }
         else {
         	// even lines
-            c.setBackground( Color.decode("#eeeeee") )
+            c.setBackground( Color.decode("#a5f7ff") )
         }
 
         c
