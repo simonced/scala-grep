@@ -1,14 +1,20 @@
-import scala.swing._
-import javax.swing.border.EmptyBorder
-import scala.sys.process._
-import scala.swing.event.MouseClicked
-import javax.swing.table.DefaultTableModel
-import javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS
-import javax.swing.JTable.AUTO_RESIZE_LAST_COLUMN
-import javax.swing.JTable.AUTO_RESIZE_OFF
 import java.awt.Dimension
-import java.awt.FontMetrics
-import scala.swing.event.TableResized
+import scala.swing.BorderPanel
+import scala.swing.BoxPanel
+import scala.swing.Button
+import scala.swing.Label
+import scala.swing.MainFrame
+import scala.swing.Orientation
+import scala.swing.ScrollPane
+import scala.swing.SimpleSwingApplication
+import scala.swing.Table
+import scala.swing.TextField
+import scala.swing.event.MouseClicked
+import scala.sys.process.Process
+
+import javax.swing.border.EmptyBorder
+import javax.swing.table.DefaultTableModel
+import java.awt.Color
 
 
 object main extends SimpleSwingApplication {
@@ -29,9 +35,9 @@ object main extends SimpleSwingApplication {
 	}
 
 	// some defaults for easier testings
-	val defaultSearchDir = "C:/Users/simon/Documents/git/scala-grep/src" // at work
+	//val defaultSearchDir = "C:/Users/simon/Documents/git/scala-grep/src" // at work
 	//val defaultSearchDir = "C:/Users/simon/git/scala-grep/src" // at home
-	//val defaultSearchDir = "/Users/simonced/Documents/git/scala-grep/src" // on my Macbook
+	val defaultSearchDir = "/Users/simonced/Documents/git/scala-grep/src" // on my Macbook
 	val defaultSearchTerm = "def .*"
 
 	// search fields
@@ -47,9 +53,13 @@ object main extends SimpleSwingApplication {
 	// main frame constructor
 	def top = new MainFrame {
 		title = "scala-grep v." + version
-		// TODO change for a BorderPanel
-		contents = new BoxPanel(Orientation.Vertical) {
-			contents ++= List(makeSearchArea, makeExplanationArea, makeMainTable)
+		val searchSection = new BoxPanel(Orientation.Vertical) {
+			contents += makeSearchArea
+			contents += makeExplanationArea
+		}
+		contents = new BorderPanel() {
+			layout( searchSection ) = BorderPanel.Position.North
+			layout( makeMainTable ) = BorderPanel.Position.Center
 		}
 		size = new Dimension(800, 600)
 		centerOnScreen()
@@ -62,7 +72,8 @@ object main extends SimpleSwingApplication {
 	def makeExplanationArea: BoxPanel = {
 		new BoxPanel(Orientation.Vertical) {
 			border = padding
-			contents += new Label("Searches are using REGEX!")
+			contents += new Label("Search is using REGEX!")
+			foreground = Color.red // TODO not working
 		}
 	}
 
@@ -129,7 +140,6 @@ object main extends SimpleSwingApplication {
 		// data to adjust column width automatically
 		var maxFileNameSize = 0 // count of characters
 		var maxLineNumSize = 0 // count of characters
-		var maxSampleSize = 0 // count of characters
 		// loop on data lines
 		for(l <- lines) {
 			// clear out the search path that is included in the results, that gives shorter file names
@@ -139,7 +149,6 @@ object main extends SimpleSwingApplication {
 			// data size logic
 			maxFileNameSize = maxFileNameSize.max( fm.stringWidth(parts(0)) )
 			maxLineNumSize = maxLineNumSize.max( fm.stringWidth(parts(1)) )
-			maxSampleSize = maxSampleSize.max( fm.stringWidth(parts(2)) )
 			// add line to model
 			tableModel.addRow(line)
 		}
@@ -147,19 +156,16 @@ object main extends SimpleSwingApplication {
 		// set new model
 		resultsTable.model = tableModel
 
-		/* sample below not working... */
 		// adapt column size to number of characters max
 
 		val fileColumn = jtable.getColumnModel().getColumn(0)
 		val lineColumn = jtable.getColumnModel().getColumn(1)
-		val sampleColumn = jtable.getColumnModel().getColumn(1)
-
-		// TODO use real font calculations
+		
+		// file column size
 		fileColumn.setMaxWidth( maxFileNameSize + textColPadding )
 		fileColumn.setMinWidth( maxFileNameSize + textColPadding )
-
+		// line number column
 		lineColumn.setMaxWidth( maxLineNumSize + textColPadding )
-//		sampleColumn.setMinWidth( maxSampleSize * 10 )
 	}
 
 
