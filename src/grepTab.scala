@@ -50,8 +50,9 @@ class grepTab(val main: String => Unit) extends BorderPanel {
 	def makeExplanationArea: BoxPanel = {
 		new BoxPanel(Orientation.Vertical) {
 			border = padding
-			contents += new Label("Search is using REGEX!")
-			foreground = Color.red // TODO color not working
+			contents += new Label("Search is using REGEX!") {
+				foreground = Color.red
+			}
 		}
 	}
 
@@ -160,7 +161,7 @@ class grepTab(val main: String => Unit) extends BorderPanel {
 	}
 
 
-		// =====================================================================
+	// =====================================================================
 
 
 	// constructor
@@ -173,6 +174,7 @@ class grepTab(val main: String => Unit) extends BorderPanel {
 		contents += makeExplanationArea
 	}
 
+	// set the main layou elements of that tab
 	layout( searchSection ) = BorderPanel.Position.North
 	layout( makeMainTable ) = BorderPanel.Position.Center
 }
