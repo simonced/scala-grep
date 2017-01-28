@@ -26,12 +26,14 @@ object main extends SimpleSwingApplication {
 	// width padding for results columns
 	val textColPadding = 10
 
+	// === Results Table ===
 	// sample: https://gist.github.com/pawelprazak/1348118
 	val headers = Seq("file", "line", "sample")
 	val resultsTable = new Table {
 		peer.setShowGrid(false)
 		// custom cell color for each line
 		peer.setDefaultRenderer(classOf[String], new grepTableCellRenderer)
+		peer.setRowSelectionAllowed(true)
 	}
 
 	// some defaults for easier testings

@@ -8,19 +8,29 @@ import java.awt.Color
 
 class grepTableCellRenderer extends DefaultTableCellRenderer {
 
+	val myfocus = false
+	
     override def getTableCellRendererComponent( table: JTable, value: Any, isSelected: Boolean, cellHasFocus: Boolean, row: Int, col: Int ) = {
 
-        val c:java.awt.Component = super.getTableCellRendererComponent( table, value,isSelected, cellHasFocus, row, col )
-        if ( row % 2 == 0 ) {
+        super.getTableCellRendererComponent( table, value, isSelected, myfocus && cellHasFocus, row, col )
+
+        if( isSelected ) {
+        	// selected row
+        	setBackground( Color.blue )
+        	setForeground( Color.white )
+        }
+        else if( row % 2 == 0 ) {
         	// odd lines
-            c.setBackground( Color.white )
+            setBackground( Color.white )
+            setForeground( Color.black )
         }
         else {
         	// even lines
-            c.setBackground( Color.decode("#a5f7ff") )
+            setBackground( Color.decode("#a5f7ff") )
+            setForeground( Color.black )
         }
 
-        c
+        this // that's a return
     }
 
 }
