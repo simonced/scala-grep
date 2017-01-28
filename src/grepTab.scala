@@ -13,8 +13,8 @@ import java.awt.Color
 
 import scala.sys.process.Process
 
-class grepTab extends BorderPanel {
-  
+class grepTab(val main: String => Unit) extends BorderPanel {
+
 	// empty border to space out elements a little
 	val padding = new EmptyBorder(5, 5, 5, 5)
 
@@ -42,7 +42,7 @@ class grepTab extends BorderPanel {
 	val searchWhatInput = new TextField(defaultSearchTerm)
 //		searchInput.columns = 15
 
-	
+
 	// ========================================
 	/**
 	 * explanation line under about the search terms
@@ -51,7 +51,7 @@ class grepTab extends BorderPanel {
 		new BoxPanel(Orientation.Vertical) {
 			border = padding
 			contents += new Label("Search is using REGEX!")
-			foreground = Color.red // TODO not working
+			foreground = Color.red // TODO color not working
 		}
 	}
 
@@ -138,12 +138,15 @@ class grepTab extends BorderPanel {
 
 		val fileColumn = jtable.getColumnModel().getColumn(0)
 		val lineColumn = jtable.getColumnModel().getColumn(1)
-		
+
 		// file column size
 		fileColumn.setMaxWidth( maxFileNameSize + textColPadding )
 		fileColumn.setMinWidth( maxFileNameSize + textColPadding )
 		// line number column
 		lineColumn.setMaxWidth( maxLineNumSize + textColPadding )
+
+		// send update signal to main
+		mainFrame.updateTabTitle( searchWhatInput.text )
 	}
 
 
@@ -156,12 +159,12 @@ class grepTab extends BorderPanel {
 		}
 	}
 
-	
+
 		// =====================================================================
 
 
-	// constructor 
-	
+	// constructor
+
 		// for the tests, launch the search right away
 		//doSearch
 
@@ -169,7 +172,7 @@ class grepTab extends BorderPanel {
 		contents += makeSearchArea
 		contents += makeExplanationArea
 	}
-	
+
 	layout( searchSection ) = BorderPanel.Position.North
 	layout( makeMainTable ) = BorderPanel.Position.Center
 }
