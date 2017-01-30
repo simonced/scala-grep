@@ -1,5 +1,4 @@
 import javax.swing.table.DefaultTableModel
-import javax.swing.border.EmptyBorder
 import scala.swing.BorderPanel
 import scala.swing.BoxPanel
 import scala.swing.event.MouseClicked
@@ -15,9 +14,6 @@ import scala.sys.process.Process
 
 class grepTab(val main: String => Unit) extends BorderPanel {
 
-	// empty border to space out elements a little
-	val padding = new EmptyBorder(5, 5, 5, 5)
-
 	// width padding for results columns
 	val textColPadding = 10
 
@@ -32,9 +28,9 @@ class grepTab(val main: String => Unit) extends BorderPanel {
 	}
 
 	// some defaults for easier testings
-	//val defaultSearchDir = "C:/Users/simon/Documents/git/scala-grep/src" // at work
+	val defaultSearchDir = "C:/Users/simon/Documents/git/scala-grep/src" // at work
 	//val defaultSearchDir = "C:/Users/simon/git/scala-grep/src" // at home
-	val defaultSearchDir = "/Users/simonced/Documents/git/scala-grep/src" // on my Macbook
+	//val defaultSearchDir = "/Users/simonced/Documents/git/scala-grep/src" // on my Macbook
 	val defaultSearchTerm = "def .*"
 
 	// search fields
@@ -49,7 +45,7 @@ class grepTab(val main: String => Unit) extends BorderPanel {
 	 */
 	def makeExplanationArea: BoxPanel = {
 		new BoxPanel(Orientation.Vertical) {
-			border = padding
+			border = sharedParams.padding
 			contents += new Label("Search is using REGEX!") {
 				foreground = Color.red
 			}
@@ -79,7 +75,7 @@ class grepTab(val main: String => Unit) extends BorderPanel {
 		// the search area itself
 		new BoxPanel(Orientation.Horizontal) {
 			contents ++= List(searchWhatLabel, searchWhatInput,searchWhereLabel, searchWhereInput, searchButton)
-			border = padding
+			border = sharedParams.padding
 		}
 	}
 
