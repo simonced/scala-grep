@@ -2,7 +2,9 @@
 import scala.swing._
 import scala.swing.TabbedPane
 import scala.swing.TabbedPane.Page
+import scala.swing.Alignment
 import java.awt.FlowLayout
+import java.awt.ComponentOrientation
 
 
 // TODO need to be able to create multiple searches (tabs)
@@ -22,10 +24,10 @@ object mainFrame extends SimpleSwingApplication {
 
 
 	def makeTopBar = {
-		// TODO find how to align that to the right
-//		new FlowPanel(FlowPanel.Alignment.Right) {
-		new FlowPanel() {
-			contents += new Button("AddTab")
+		// align that to the right (feels a bit hacky no?)
+		new BorderPanel() {
+			border = sharedParams.padding
+			add(new Button("AddTab"), BorderPanel.Position.East)
 			// TODO add button action
 		}
 	}
