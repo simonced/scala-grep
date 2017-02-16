@@ -1,4 +1,3 @@
-import javax.swing.table.DefaultTableModel
 import scala.swing.BorderPanel
 import scala.swing.BoxPanel
 import scala.swing.event.MouseClicked
@@ -19,7 +18,7 @@ class grepTab(val main: String => Unit) extends BorderPanel {
 
 	// === Results Table ===
 	// sample: https://gist.github.com/pawelprazak/1348118
-	val headers = Seq("file", "line", "sample")
+
 	val resultsTable = new Table {
 		peer.setShowGrid(false)
 		// custom cell color for each line
@@ -103,11 +102,7 @@ class grepTab(val main: String => Unit) extends BorderPanel {
 	 * TODO I am not sure that recreating a new model everytime is the best solution
 	 */
 	def updateResults(what: String, where:String, lines: Array[String]) {
-		val tableModel = new DefaultTableModel
-
-		for(col <- headers) {
-			tableModel.addColumn(col)
-		}
+		val tableModel = new grepTableModel
 
 		val jtable = resultsTable.peer
 		val fm = jtable.getFontMetrics(jtable.getFont)
