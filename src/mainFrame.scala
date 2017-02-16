@@ -3,6 +3,7 @@ import scala.swing._
 import scala.swing.TabbedPane
 import scala.swing.TabbedPane.Page
 import scala.swing.Alignment
+import scala.swing.event.MouseClicked
 import java.awt.FlowLayout
 import java.awt.ComponentOrientation
 
@@ -19,7 +20,15 @@ object mainFrame extends SimpleSwingApplication {
 		// first TAB
 		val tab1 = new TabbedPane.Page( "New Search", new grepTab(updateTabTitle) )
 		pages += tab1
-//			pages += new TabbedPane.Page( "Page 2", new grepTab )
+//			pages += new TabbedPane.Page( "Page 2", new grepTab(updateTabTitle) )
+	}
+
+
+	/**
+	 * method to add a page to the tabs
+	 */
+	def addSearchTab {
+		tabs.pages += new TabbedPane.Page( "New Search", new grepTab(updateTabTitle) )
 	}
 
 
@@ -27,8 +36,12 @@ object mainFrame extends SimpleSwingApplication {
 		// align that to the right (feels a bit hacky no?)
 		new BorderPanel() {
 			border = sharedParams.padding
-			add(new Button("AddTab"), BorderPanel.Position.East)
-			// TODO add button action
+			add(new Button("AddTab") {
+				listenTo(mouse.clicks)
+				reactions += {
+					case MouseClicked(_, _, _, _, _) => addSearchTab
+				}
+			}, BorderPanel.Position.East)
 		}
 	}
 
