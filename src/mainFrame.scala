@@ -7,10 +7,7 @@ import scala.swing.event.MouseClicked
 import java.awt.FlowLayout
 import java.awt.ComponentOrientation
 
-
-// TODO need to be able to create multiple searches (tabs)
 // TODO save last search parameters ? ie: in a simple text file
-
 
 object mainFrame extends SimpleSwingApplication {
 	val version = "0.3"
@@ -20,7 +17,6 @@ object mainFrame extends SimpleSwingApplication {
 		// first TAB
 		val tab1 = new TabbedPane.Page( "New Search", new grepTab(updateTabTitle) )
 		pages += tab1
-//			pages += new TabbedPane.Page( "Page 2", new grepTab(updateTabTitle) )
 	}
 
 
@@ -29,6 +25,7 @@ object mainFrame extends SimpleSwingApplication {
 	 */
 	def addSearchTab {
 		tabs.pages += new TabbedPane.Page( "New Search", new grepTab(updateTabTitle) )
+		// TODO focus the new tab
 	}
 
 
