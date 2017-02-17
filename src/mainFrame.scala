@@ -10,14 +10,12 @@ import java.awt.ComponentOrientation
 // TODO save last search parameters ? ie: in a simple text file
 
 object mainFrame extends SimpleSwingApplication {
-	val version = "0.3"
+	val version = "0.4"
 
 
-	val tabs = new TabbedPane {
-		// first TAB
-		val tab1 = new TabbedPane.Page( "New Search", new grepTab(updateTabTitle) )
-		pages += tab1
-	}
+	val tabs = new TabbedPane
+	// first TAB
+	addSearchTab
 
 
 	/**
@@ -25,7 +23,10 @@ object mainFrame extends SimpleSwingApplication {
 	 */
 	def addSearchTab {
 		tabs.pages += new TabbedPane.Page( "New Search", new grepTab(updateTabTitle) )
-		// TODO focus the new tab
+
+		// focus the new tab
+		val currentTabsCount = tabs.peer.getTabCount
+		tabs.peer.setSelectedIndex(currentTabsCount - 1)
 	}
 
 
