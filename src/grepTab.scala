@@ -113,8 +113,8 @@ class grepTab(val main: String => Unit) extends BorderPanel {
 		// loop on data lines
 		for(l <- lines) {
 			// clear out the search path that is included in the results, that gives shorter file names
-			val strippedLine= l.replace(where, "")
-			val parts = strippedLine.split(":")
+			val strippedLine = l.replace(where, "")
+			val parts = strippedLine.split(":").map(_.trim) // triming the spaces
 			val line:Array[Object] = Array(parts(0), parts(1), parts(2))
 			// data size logic
 			maxFileNameSize = maxFileNameSize.max( fm.stringWidth(parts(0)) )
