@@ -1,7 +1,7 @@
 import javax.swing.table.DefaultTableModel
 
 
-class grepTableModel extends DefaultTableModel {
+class GrepTableModel extends DefaultTableModel {
 
 	val headers = Seq("file", "line", "sample")
 

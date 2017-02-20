@@ -6,7 +6,7 @@ import java.awt.Color
 
 
 
-class grepTableCellRenderer extends DefaultTableCellRenderer {
+class GrepTableCellRenderer extends DefaultTableCellRenderer {
 
 	val myfocus = false
 	

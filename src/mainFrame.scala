@@ -22,7 +22,7 @@ object mainFrame extends SimpleSwingApplication {
 	 * method to add a page to the tabs
 	 */
 	def addSearchTab {
-		tabs.pages += new TabbedPane.Page( "New Search", new grepTab(updateTabTitle) )
+		tabs.pages += new TabbedPane.Page( "New Search", new GrepTab(updateTabTitle) )
 
 		// focus the new tab
 		val currentTabsCount = tabs.peer.getTabCount
@@ -33,7 +33,7 @@ object mainFrame extends SimpleSwingApplication {
 	def makeTopBar = {
 		// align that to the right (feels a bit hacky no?)
 		new BorderPanel() {
-			border = sharedParams.padding
+			border = SharedParams.padding
 			add(new Button("AddTab") {
 				listenTo(mouse.clicks)
 				reactions += {

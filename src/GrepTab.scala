@@ -11,7 +11,7 @@ import java.awt.Color
 
 import scala.sys.process.Process
 
-class grepTab(val main: String => Unit) extends BorderPanel {
+class GrepTab(val main: String => Unit) extends BorderPanel {
 
 	// width padding for results columns
 	val textColPadding = 10
@@ -22,7 +22,7 @@ class grepTab(val main: String => Unit) extends BorderPanel {
 	val resultsTable = new Table {
 		peer.setShowGrid(false)
 		// custom cell color for each line
-		peer.setDefaultRenderer(classOf[String], new grepTableCellRenderer)
+		peer.setDefaultRenderer(classOf[String], new GrepTableCellRenderer)
 		peer.setRowSelectionAllowed(true)
 	}
 
@@ -44,7 +44,7 @@ class grepTab(val main: String => Unit) extends BorderPanel {
 	 */
 	def makeExplanationArea: BoxPanel = {
 		new BoxPanel(Orientation.Vertical) {
-			border = sharedParams.padding
+			border = SharedParams.padding
 			contents += new Label("Search is using REGEX!") {
 				foreground = Color.red
 			}
@@ -74,7 +74,7 @@ class grepTab(val main: String => Unit) extends BorderPanel {
 		// the search area itself
 		new BoxPanel(Orientation.Horizontal) {
 			contents ++= List(searchWhatLabel, searchWhatInput,searchWhereLabel, searchWhereInput, searchButton)
-			border = sharedParams.padding
+			border = SharedParams.padding
 		}
 	}
 
@@ -102,7 +102,7 @@ class grepTab(val main: String => Unit) extends BorderPanel {
 	 * TODO I am not sure that recreating a new model everytime is the best solution
 	 */
 	def updateResults(what: String, where:String, lines: Array[String]) {
-		val tableModel = new grepTableModel
+		val tableModel = new GrepTableModel
 
 		val jtable = resultsTable.peer
 		val fm = jtable.getFontMetrics(jtable.getFont)
