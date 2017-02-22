@@ -22,7 +22,7 @@ object mainFrame extends SimpleSwingApplication {
 	 * method to add a page to the tabs
 	 */
 	def addSearchTab {
-		tabs.pages += new TabbedPane.Page( "New Search", new GrepTab(updateTabTitle) )
+		tabs.pages += new TabbedPane.Page( "New Search", new GrepTab(updateTabTitle, closeTab) )
 
 		// focus the new tab
 		val currentTabsCount = tabs.peer.getTabCount
@@ -41,6 +41,11 @@ object mainFrame extends SimpleSwingApplication {
 				}
 			}, BorderPanel.Position.East)
 		}
+	}
+
+
+	def closeTab() {
+		tabs.peer.remove( tabs.selection.index )
 	}
 
 
@@ -63,9 +68,7 @@ object mainFrame extends SimpleSwingApplication {
 	 * @param title:String the new title to reflect the search
 	 */
 	def updateTabTitle(title:String) {
-
-		val i = tabs.peer.getSelectedIndex
+		val i = tabs.selection.index
 		tabs.peer.setTitleAt(i, title)
-
 	}
 }

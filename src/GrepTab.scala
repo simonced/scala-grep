@@ -10,8 +10,12 @@ import scala.swing.Orientation
 import java.awt.Color
 
 import scala.sys.process.Process
+import scala.swing.FlowPanel
 
-class GrepTab(val main: String => Unit) extends BorderPanel {
+// TODO add status line in panes
+// TODO deal with case sensitivity (check box?)
+
+class GrepTab(val main: String => Unit, val closeAction: () => Unit) extends BorderPanel {
 
 	// width padding for results columns
 	val textColPadding = 10
@@ -152,6 +156,19 @@ class GrepTab(val main: String => Unit) extends BorderPanel {
 	}
 
 
+	def makeCloseTabButton = {
+		new BorderPanel {
+			val button = new Button("Close") {
+				listenTo(mouse.clicks)
+				reactions += {
+					case MouseClicked(_, _, _, _, _) => closeAction()
+				}
+			}
+			border = SharedParams.padding
+			layout( button ) = BorderPanel.Position.East
+		}
+	}
+
 	// =====================================================================
 
 
@@ -161,6 +178,7 @@ class GrepTab(val main: String => Unit) extends BorderPanel {
 		//doSearch
 
 	val searchSection = new BoxPanel(Orientation.Vertical) {
+		contents += makeCloseTabButton
 		contents += makeSearchArea
 		contents += makeExplanationArea
 	}
